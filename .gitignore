@@ -1,0 +1,22 @@
+# macOS system files
+.DS_Store
+
+# Vim/Editor backups
+*.swp
+*.swo
+*.swn
+*~
+
+# Compiled binary
+keylogger
+
+# Logs
+*.log
+/tmp/*.log
+
+# Launch agent plist (if generated)
+*.plist
+
+# Misc
+build/
+
